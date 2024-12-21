@@ -15,7 +15,7 @@ on:
         default: 'VIKINGYFY/immortalwrt'
         required: true
         type: choice
-        options: [VIKINGYFY/immortalwrt, immortalwrt/immortalwrt, LiBwrt-op/openwrt-6.x, qosmio/openwrt-ipq,coolsnowwolf/lede]
+        options: [VIKINGYFY/immortalwrt, immortalwrt/immortalwrt, LiBwrt-op/openwrt-6.x, qosmio/openwrt-ipq]
       BRANCH:
         default: 'main'
         required: true
@@ -32,7 +32,10 @@ on:
         default: true
         required: true
         type: boolean
-
+      COMMIT:
+        description: '指定Commit。'
+        required: false
+        type: string
 #CI权限
 permissions: write-all
 
@@ -59,6 +62,8 @@ jobs:
       WRT_BRANCH: ${{inputs.BRANCH}}
       #源码名称
       WRT_SOURCE: ${{inputs.SOURCE}}
+      #源码COMMIT
+      WRT_COMMIT: ${{inputs.COMMIT}}
       #后缀名称
       WRT_SUFFIX: ${{inputs.SUFFIX}}
       #插件调整
