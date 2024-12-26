@@ -40,6 +40,9 @@ on:
       WRT_COMMIT:
         required: false
         type: string
+      WRT_USEAPK:
+        required: true
+        type: string
 
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -55,7 +58,9 @@ env:
   WRT_PACKAGE: ${{inputs.WRT_PACKAGE}}
   WRT_TEST: ${{inputs.WRT_TEST}}
   WRT_COMMIT: ${{inputs.WRT_COMMIT}}
+  WRT_USEAPK: ${{inputs.WRT_USEAPK}}
 
+  
 jobs:
   core:
     name: ${{inputs.WRT_SOURCE}} - (${{inputs.WRT_NAME}})
@@ -92,8 +97,8 @@ jobs:
 
           VERSION_INFO=$(git show -s --date=short --format="作者: %an<br/>时间: %cd<br/>内容: %s<br/>hash: %h")
           echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
-          VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' include/kernel-6.6)
-          echo "VERSION_KERNEL=$VERSION_KERNEL" >> $GITHUB_ENV
+          # VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' include/kernel-6.6)
+          # echo "VERSION_KERNEL=$VERSION_KERNEL" >> $GITHUB_ENV
           VERSION_LOG=$(git log --since="48 hours ago" --until="now" --pretty=format:"%h %s" --no-merges -- . ':(exclude)scripts/feeds')
           if [ -n "$VERSION_LOG" ] && echo "$VERSION_LOG" | grep -q .; then
             echo "WRT_NEED_COMPILE=true" >> $GITHUB_ENV
@@ -101,6 +106,7 @@ jobs:
             echo "WRT_NEED_COMPILE=false" >> $GITHUB_ENV
             echo "!!!过去48小时内无更新,跳过编译流程!!!"
           fi
+          echo "WRT_NEED_COMPILE=true" >> $GITHUB_ENV
 
       - name: Free Disk Space
         uses: endersonmenezes/free-disk-space@main
@@ -235,6 +241,7 @@ jobs:
           cp -f ./seed.config ./upload/Config_"$WRT_TARGET"_"$WRT_NAME"_"$WRT_VER"_"$WRT_DATE".seed.txt
 
           if [[ $WRT_TEST != 'true' ]]; then
+            KVER=$(find ./bin/targets/ -type f -name "*.manifest" -exec grep -oP '^kernel - \K[\d\.]+' {} \;)
             find ./bin/targets/ -iregex ".*\(buildinfo\|json\|manifest\|sha256sums\|packages\)$" -exec rm -rf {} +
             find ./bin/targets/ -iregex ".*\(squashfs-recovery\|initramfs-uImage\).*" -exec rm -rf {} +
 
@@ -249,13 +256,14 @@ jobs:
 
             find ./bin/targets/ -type f -exec mv -f {} ./upload/ \;
           fi
+          echo "WRT_KVER=${KVER:-none}" >> $GITHUB_ENV
 
       - name: Release Firmware
         if: ${{ env.WRT_NEED_COMPILE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: R${{ env.WRT_DATE }}_${{ env.WRT_NAME }}
-          name: R${{ env.WRT_DATE }} for ${{ env.WRT_NAME }}
+          tag_name: R${{ env.WRT_DATE }}_${{ env.WRT_NAME }}_${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}
+          name: R${{ env.WRT_DATE }} for ${{ env.WRT_NAME }} use ${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}
           files: ./wrt/upload/*.*
           body: |
 
@@ -268,7 +276,8 @@ jobs:
             - 🌐 地址: **${{ env.WRT_IP }}**
             - 🔑 密码: **${{ env.WRT_PW }}**
             ### 🧊 固件版本
-            - 固件内核版本：**${{ env.VERSION_KERNEL }}**
+            - 固件内核：**${{ env.WRT_KVER }}**
+            - 包管理器：**${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}**
             - 固件编译前最后一次➦[主源码](${{ env.WRT_REPO }})更新记录
             - ${{ env.VERSION_INFO }}
 

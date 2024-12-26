@@ -16,6 +16,8 @@ CFG_FILE="./package/base-files/files/bin/config_generate"
 sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE
 #修改默认主机名
 sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
+#临时修复luci无法保存的问题
+sed -i "s/\[sid\]\.hasOwnProperty/\[sid\]\?\.hasOwnProperty/g" $(find ./feeds/luci/modules/luci-base/ -type f -name "uci.js")
 
 #调整位置
 sed -i 's/services/system/g' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
@@ -67,4 +69,17 @@ if [[ $WRT_TARGET == *"IPQ"* ]]; then
 	#取消nss相关feed
 	echo "CONFIG_FEED_nss_packages=n" >> ./.config
 	echo "CONFIG_FEED_sqm_scripts_nss=n" >> ./.config
+fi
+
+#IPK包管理调整
+if [[ $WRT_USEAPK == 'true' ]]; then
+	echo "CONFIG_USE_APK=y" >> ./.config
+else
+	echo "CONFIG_USE_APK=n" >> ./.config
+	#增加自定义配置项
+	if [ -f "./package/emortal/default-settings/Makefile" ]; then
+ 	sed -i '/99-default-settings-chinese/ a \	$(INSTALL_BIN) ./files/101-default-custom-settings $(1)/etc/uci-defaults/' ./package/emortal/default-settings/Makefile
+  	cat $GITHUB_WORKSPACE/Scripts/patches/101-default-custom-settings > ./package/emortal/default-settings/files/101-default-custom-settings
+	echo "101-default-custom-settings has been added!"
+	fi
 fi

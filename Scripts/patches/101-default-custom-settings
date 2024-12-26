@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# fix distfeeds
+sed -i 's/^option check_signature/#option check_signature/' /etc/opkg.conf
+
+cp /etc/opkg/distfeeds.conf /etc/opkg/distfeeds.conf.101.bak
+cat << "EOF" > /etc/opkg/distfeeds.conf
+src/gz immortalwrt_base https://downloads.immortalwrt.org/releases/packages-24.10/aarch64_cortex-a53/base
+src/gz immortalwrt_luci https://downloads.immortalwrt.org/releases/packages-24.10/aarch64_cortex-a53/luci
+src/gz immortalwrt_packages https://downloads.immortalwrt.org/releases/packages-24.10/aarch64_cortex-a53/packages
+src/gz immortalwrt_routing https://downloads.immortalwrt.org/releases/packages-24.10/aarch64_cortex-a53/routing
+src/gz immortalwrt_telephony https://downloads.immortalwrt.org/releases/packages-24.10/aarch64_cortex-a53/telephony
+EOF
+
+
+exit 0

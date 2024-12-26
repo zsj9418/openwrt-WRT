@@ -6,8 +6,7 @@ PKG_PATCH="$GITHUB_WORKSPACE/wrt/package/"
 if [ -d *"homeproxy"* ]; then
 	HP_RULES="surge"
 	HP_PATCH="homeproxy/root/etc/homeproxy"
-
-	chmod +x ./$HP_PATCH/scripts/*
+ 
 	rm -rf ./$HP_PATCH/resources/*
 
 	git clone -q --depth=1 --single-branch --branch "release" "https://github.com/Loyalsoldier/surge-rules.git" ./$HP_RULES/
@@ -57,13 +56,13 @@ if [ -f "$SOCAT_FILE" ]; then
 fi
 
 # 修复 OpenVPN 和 Easy-RSA 配置文件冲突
-OPENVPN_FILE=$(find ../feeds/packages/net/openvpn -maxdepth 3 -type f -name "Makefile")
+OPENVPN_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn/Makefile")
 if [ -f "$OPENVPN_FILE" ]; then
     sed -i '/INSTALL_CONF/{N;d;}' $OPENVPN_FILE
     cd $PKG_PATCH && echo "OpenVPN conflict has been fixed!"
 fi
 
-EASY_RSA_FILE=$(find ../feeds/packages/net/openvpn-easy-rsa -maxdepth 3 -type f -name "Makefile")
+EASY_RSA_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn-easy-rsa/Makefile")
 if [ -f "$EASY_RSA_FILE" ]; then
     sed -i '/vars.example/d' $EASY_RSA_FILE
     cd $PKG_PATCH && echo "Easy-RSA conflict has been fixed!"

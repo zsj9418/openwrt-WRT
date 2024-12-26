@@ -28,14 +28,19 @@ on:
         required: false
         type: string
       TEST:
-        description: '仅输出配置文件，不编译固件。'
+        description: '仅输出配置文件，不编译固件'
         default: true
         required: true
         type: boolean
       COMMIT:
-        description: '指定Commit。'
+        description: '指定Commit'
         required: false
         type: string
+      WRT_USEAPK:
+        description: '是否使用APK'
+        default: true
+        required: true
+        type: boolean
 #CI权限
 permissions: write-all
 
