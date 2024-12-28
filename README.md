@@ -2,9 +2,10 @@
 
 如需自定义, 请fork.
 
-只编译: 
+只编译（不带WiFi）: 
 
     ipq60xx_DEVICE_jdcloud_re-cs-07=y # 京东云RE-CS-07 (太乙)
+    ipq60xx_DEVICE_jdcloud_re-ss-01=y # 京东云RE-SS-01 (亚瑟)
 
 可编译: 
 
