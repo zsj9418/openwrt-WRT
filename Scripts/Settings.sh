@@ -45,6 +45,11 @@ WRT_IPPART=$(echo $WRT_IP | cut -d'.' -f1-3)
 # echo "OpenVPN Server has been fixed and is now accessible on the network!"
 # fi
 
+#修复Openvpnserver 修复ifname语法问题
+if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/uci-defaults/openvpn" ]; then
+    sed -i 's/network\.vpn0\.ifname/network\.vpn0\.device/g' ./package/feeds/luci/luci-app-openvpn-server/root/etc/uci-defaults/openvpn
+    echo "OpenVPN Server has fixed the ifname syntax issue!"
+fi
 #修复Openvpnserver默认配置的网关地址与无法多终端同时连接问题
 if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn" ]; then
     echo "	option duplicate_cn '1'" >> ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
