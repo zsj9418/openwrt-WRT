@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PKG_PATCH="$GITHUB_WORKSPACE/wrt/package/"
+PKG_PATH="$GITHUB_WORKSPACE/wrt/package/"
 
 #预置HomeProxy数据
 if [ -d *"homeproxy"* ]; then
@@ -19,7 +19,7 @@ if [ -d *"homeproxy"* ]; then
 
 	cd .. && rm -rf ./$HP_RULES/
 
-	cd $PKG_PATCH && echo "homeproxy date has been updated!"
+	cd $PKG_PATH && echo "homeproxy date has been updated!"
 fi
 
 #修复argon主题进度条颜色不同步
@@ -36,7 +36,7 @@ if [ -f "$PW_FILE" ]; then
 	sed -i '/config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR/,/default n/d' $PW_FILE
 	sed -i '/Shadowsocks_NONE/d; /Shadowsocks_Libev/d; /ShadowsocksR/d' $PW_FILE
 
-	cd $PKG_PATCH && echo "passwall has been fixed!"
+	cd $PKG_PATH && echo "passwall has been fixed!"
 fi
 
 SP_FILE=$(find ./ -maxdepth 3 -type f -wholename "*/luci-app-ssr-plus/Makefile")
@@ -45,32 +45,32 @@ if [ -f "$SP_FILE" ]; then
 	sed -i '/config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR/,/x86_64/d' $SP_FILE
 	sed -i '/Shadowsocks_NONE/d; /Shadowsocks_Libev/d; /ShadowsocksR/d' $SP_FILE
 
-	cd $PKG_PATCH && echo "ssr-plus has been fixed!"
+	cd $PKG_PATH && echo "ssr-plus has been fixed!"
 fi
 
 #修复TailScale配置文件冲突
 TS_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/tailscale/Makefile")
 if [ -f "$TS_FILE" ]; then
 	sed -i '/\/files/d' $TS_FILE
-	cd $PKG_PATCH && echo "tailscale has been fixed!"
+	cd $PKG_PATH && echo "tailscale has been fixed!"
 fi
 
 #修复Socat配置文件冲突
 SOCAT_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/socat/Makefile")
 if [ -f "$SOCAT_FILE" ]; then
 	sed -i '/\/files/d' $SOCAT_FILE
-	cd $PKG_PATCH && echo "socat has been fixed!"
+	cd $PKG_PATH && echo "socat has been fixed!"
 fi
 
 # 修复 OpenVPN 和 Easy-RSA 配置文件冲突
 OPENVPN_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn/Makefile")
 if [ -f "$OPENVPN_FILE" ]; then
     sed -i '/INSTALL_CONF/{N;d;}' $OPENVPN_FILE
-    cd $PKG_PATCH && echo "OpenVPN conflict has been fixed!"
+    cd $PKG_PATH && echo "OpenVPN conflict has been fixed!"
 fi
 
 EASY_RSA_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/openvpn-easy-rsa/Makefile")
 if [ -f "$EASY_RSA_FILE" ]; then
     sed -i '/vars.example/d' $EASY_RSA_FILE
-    cd $PKG_PATCH && echo "Easy-RSA conflict has been fixed!"
+    cd $PKG_PATH && echo "Easy-RSA conflict has been fixed!"
 fi
