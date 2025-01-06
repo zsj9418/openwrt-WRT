@@ -148,8 +148,8 @@ jobs:
         if: ${{ env.WRT_TEST != 'true' && env.WRT_NEED_COMPILE == 'true' }}
         uses: actions/cache@main
         with:
-          key: ${{env.WRT_TARGET}}-${{env.WRT_VER}}-${{env.WRT_HASH}}
-          restore-keys: ${{env.WRT_TARGET}}-${{env.WRT_VER}}
+          key: ${{env.WRT_TARGET}}-${{env.WRT_VER}}-${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}-${{env.WRT_HASH}}
+          restore-keys: ${{env.WRT_TARGET}}-${{env.WRT_VER}}-${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}
           path: |
             ./wrt/.ccache
             ./wrt/staging_dir/host*
@@ -171,7 +171,7 @@ jobs:
           fi
 
           if ${{steps.check-cache.outputs.cache-hit != 'true'}}; then
-            CACHE_LIST=$(gh cache list --key "$WRT_TARGET-$WRT_VER" | cut -f 1)
+            CACHE_LIST=$(gh cache list --key "$WRT_TARGET-$WRT_VER-${{ env.WRT_USEAPK == 'true' && 'APK' || 'IPKG' }}" | cut -f 1)
             for CACHE_KEY in $CACHE_LIST; do
                gh cache delete $CACHE_KEY
             done
