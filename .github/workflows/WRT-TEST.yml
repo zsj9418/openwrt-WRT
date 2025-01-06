@@ -10,7 +10,7 @@ on:
         default: 'IPQ60XX-WIFI-NO'
         required: true
         type: choice
-        options: [IPQ60XX-WIFI-NO, TEST]
+        options: [IPQ60XX-WIFI, TEST]
       SOURCE:
         default: 'VIKINGYFY/immortalwrt'
         required: true
@@ -58,7 +58,7 @@ jobs:
       #默认主机名
       WRT_NAME: TWRT
       #默认地址
-      WRT_IP: 192.168.10.1
+      WRT_IP: 192.168.3.18
       #默认密码，仅作提示，修改无用
       WRT_PW: password|none
       #源码链接
