@@ -4,8 +4,8 @@ name: QCA-ALL
 #CI计划
 on:
   #自动清理：每天早上5点
-  schedule:
-   - cron: 0 21 * * *
+#  schedule:
+ #  - cron: 0 21 * * *
   #自动编译：当Auto-Clean运行完成后
   #workflow_run:
   #  workflows: ["Auto-Clean"]
@@ -55,7 +55,7 @@ jobs:
       #默认主机名
       WRT_NAME: ${{matrix.REPO_INFO.NAME}}
       #默认地址
-      WRT_IP: 192.168.10.1
+      WRT_IP: 192.168.3.18
       #默认密码，仅作提示，修改无用
       WRT_PW: none
       #源码链接
