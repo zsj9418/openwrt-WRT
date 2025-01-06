@@ -91,15 +91,10 @@ if [[ $WRT_USEAPK == 'true' ]]; then
 else
 	echo "CONFIG_USE_APK=n" >> ./.config
 	echo "CONFIG_PACKAGE_default-settings-chn=y" >> ./.config
-	#增加自定义配置项 (为啥不生效!!!)
-	# if [ -f "./package/emortal/default-settings/Makefile" ]; then
- 	# sed -i '/99-default-settings-chinese/ a \	$(INSTALL_BIN) ./files/101-default-custom-settings $(1)/etc/uci-defaults/' ./package/emortal/default-settings/Makefile
-	# cat ./package/emortal/default-settings/Makefile
-  	# cat $GITHUB_WORKSPACE/Scripts/patches/101-default-custom-settings > ./package/emortal/default-settings/files/101-default-custom-settings
-   	# cat ./package/emortal/default-settings/files/101-default-custom-settings
-	# fi
-	if [ -f "./package/emortal/default-settings/files/99-default-settings-chinese" ]; then		
-		cat $GITHUB_WORKSPACE/Scripts/patches/99-default-settings-chinese > ./package/emortal/default-settings/files/99-default-settings-chinese
+
+	DEFAULT_CN_FILE=./package/emortal/default-settings/files/99-default-settings-chinese
+	if [ -f "$DEFAULT_CN_FILE" ]; then
+		sed -i.bak "/^exit 0/r $GITHUB_WORKSPACE/Scripts/patches/99-default-settings-chinese" $DEFAULT_CN_FILE
 		echo "99-default-settings-chinese has been added!"
 	fi
 fi
